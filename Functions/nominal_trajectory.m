@@ -30,8 +30,7 @@ if choice == 1     % Hover
     YAWref = zeros(1,numel(t_vec));
 
     traj_name = [num2str(t_end), 'Hover', num2str(x), num2str(y), num2str(z)];
-
-
+    
 elseif choice == 2      % Straight
 
     yawRefQA = input('Interested in sequential yaw control? (1=YES): ', 's');
@@ -39,7 +38,7 @@ elseif choice == 2      % Straight
     if strcmp(yawRefQA, '1')
         sequential = true;
     end
-    
+   
     x_step = 20; z_step = 10;
     
     wpts = [0, 0, z_step; x_step, 0, z_step]';

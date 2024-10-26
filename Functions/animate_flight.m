@@ -12,7 +12,7 @@ function animate_flight(drone, X, U, T, R_B2B0)
 
         SPointMarkerSize = 4;
         SPointLineWidth = 4;
-        DroneThickness = 4;
+        DroneThickness = 5;
         ampFact = 1;
 
 
@@ -20,7 +20,7 @@ function animate_flight(drone, X, U, T, R_B2B0)
 
         SPointMarkerSize = 1;
         SPointLineWidth = 1;
-        DroneThickness = 1;
+        DroneThickness = 2;
         ampFact = 2;
 
     end
@@ -87,7 +87,7 @@ function animate_flight(drone, X, U, T, R_B2B0)
 
     spaceOverView = 10;
 
-    figureSize = [100, 100, 1200, 800]; % [left, bottom, width, height]
+    figureSize = [0, 0, 1920/2, 1080]; % [left, bottom, width, height]
     fig = figure('Position', figureSize);
     set(fig, 'Resize', 'off');
 
@@ -99,7 +99,7 @@ function animate_flight(drone, X, U, T, R_B2B0)
     ygrid = (ylimits(1):res:ylimits(2));
 
     surf(xgrid, ygrid, zeros(numel(ygrid), numel(xgrid)), 'EdgeColor','none')
-    colormap('bone')
+    colormap('sky')
 
 
     axis equal;
@@ -136,30 +136,30 @@ function animate_flight(drone, X, U, T, R_B2B0)
 
     n = resultBodyframe(:,3,1);
 
-    force = resultPropSpeed(1,:);
-
-    scale = 0.1;
+    omega_squared = resultPropSpeed(1,:);
 
     l1 = 7.6; l2 = 0.1;
+    
+    max_omega_squared = (drone.max_rpm*2*pi/60)^2;
 
-
+    visual_force_scalar = 2*(exp(omega_squared/max_omega_squared)-1);
 
     % Define force vectors
-    fvec1 = plot3([posS(1,1)+a1(1)*drone.r posS(1,1)+a1(1)*drone.r+n(1)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)], ...
-                  [posS(2,1)+a1(2)*drone.r posS(2,1)+a1(2)*drone.r+n(2)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)], ...
-                  [posS(3,1)+a1(3)*drone.r posS(3,1)+a1(3)*drone.r+n(3)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)], 'color', 'r');
+    fvec1 = plot3([posS(1,1)+a1(1)*ampFact*drone.r posS(1,1)+a1(1)*ampFact*drone.r-n(1)*visual_force_scalar(1)], ...
+                  [posS(2,1)+a1(2)*ampFact*drone.r posS(2,1)+a1(2)*ampFact*drone.r+n(2)*visual_force_scalar(1)], ...
+                  [posS(3,1)+a1(3)*ampFact*drone.r posS(3,1)+a1(3)*ampFact*drone.r+n(3)*visual_force_scalar(1)], 'color', 'r');
 
-    fvec2 = plot3([posS(1,1)+a2(1)*drone.r posS(1,1)+a2(1)*drone.r+n(1)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)], ...
-                  [posS(2,1)+a2(2)*drone.r posS(2,1)+a2(2)*drone.r+n(2)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)], ...
-                  [posS(3,1)+a2(3)*drone.r posS(3,1)+a2(3)*drone.r+n(3)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)], 'color', 'r');
+    fvec2 = plot3([posS(1,1)+a2(1)*ampFact*drone.r posS(1,1)+a2(1)*ampFact*drone.r-n(1)*visual_force_scalar(2)], ...
+                  [posS(2,1)+a2(2)*ampFact*drone.r posS(2,1)+a2(2)*ampFact*drone.r+n(2)*visual_force_scalar(2)], ...
+                  [posS(3,1)+a2(3)*ampFact*drone.r posS(3,1)+a2(3)*ampFact*drone.r+n(3)*visual_force_scalar(2)], 'color', 'r');
 
-    fvec3 = plot3([posS(1,1)-a1(1)*drone.r posS(1,1)-a1(1)*drone.r+n(1)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)], ...
-                  [posS(2,1)-a1(2)*drone.r posS(2,1)-a1(2)*drone.r+n(2)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)], ...
-                  [posS(3,1)-a1(3)*drone.r posS(3,1)-a1(3)*drone.r+n(3)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)], 'color', 'r');
+    fvec3 = plot3([posS(1,1)-a1(1)*ampFact*drone.r posS(1,1)-a1(1)*ampFact*drone.r-n(1)*visual_force_scalar(3)], ...
+                  [posS(2,1)-a1(2)*ampFact*drone.r posS(2,1)-a1(2)*ampFact*drone.r+n(2)*visual_force_scalar(3)], ...
+                  [posS(3,1)-a1(3)*ampFact*drone.r posS(3,1)-a1(3)*ampFact*drone.r+n(3)*visual_force_scalar(3)], 'color', 'r');
 
-    fvec4 = plot3([posS(1,1)-a2(1)*drone.r posS(1,1)-a2(1)*drone.r+n(1)*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)], ...
-                  [posS(2,1)-a2(2)*drone.r posS(2,1)-a2(2)*drone.r+n(2)*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)], ...
-                  [posS(3,1)-a2(3)*drone.r posS(3,1)-a2(3)*drone.r+n(3)*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)], 'color', 'r');
+    fvec4 = plot3([posS(1,1)-a2(1)*ampFact*drone.r posS(1,1)-a2(1)*ampFact*drone.r-n(1)*visual_force_scalar(4)], ...
+                  [posS(2,1)-a2(2)*ampFact*drone.r posS(2,1)-a2(2)*ampFact*drone.r+n(2)*visual_force_scalar(4)], ...
+                  [posS(3,1)-a2(3)*ampFact*drone.r posS(3,1)-a2(3)*ampFact*drone.r+n(3)*visual_force_scalar(4)], 'color', 'r');
 
     % Define body fixed frame-------------------------->
     h1 = plot3([r_0(1) FrameS(1,1,1)], [r_0(2) FrameS(2,1,1)], [r_0(3) FrameS(3,1,1)], 'color', 'k');
@@ -173,12 +173,12 @@ function animate_flight(drone, X, U, T, R_B2B0)
 
 
     % Define drone structure--------------------------->
-    ax1 = plot3([posS(1,1)-a1(1)*drone.r posS(1,1)+a1(1)*drone.r], ...
-                [posS(2,1)-a1(2)*drone.r posS(2,1)+a1(2)*drone.r], ...
-                [posS(3,1)-a1(3)*drone.r posS(3,1)+a1(3)*drone.r], 'color', 'k');
-    ax2 = plot3([posS(1,1)-a2(1)*drone.r posS(1,1)+a2(1)*drone.r], ...
-                [posS(2,1)-a2(2)*drone.r posS(2,1)+a2(2)*drone.r], ...
-                [posS(3,1)-a2(3)*drone.r posS(3,1)+a2(3)*drone.r], 'color', 'k');
+    ax1 = plot3([posS(1,1)-a1(1)*ampFact*drone.r posS(1,1)+a1(1)*ampFact*drone.r], ...
+                [posS(2,1)-a1(2)*ampFact*drone.r posS(2,1)+a1(2)*ampFact*drone.r], ...
+                [posS(3,1)-a1(3)*ampFact*drone.r posS(3,1)+a1(3)*ampFact*drone.r], 'color', 'k');
+    ax2 = plot3([posS(1,1)-a2(1)*ampFact*drone.r posS(1,1)+a2(1)*ampFact*drone.r], ...
+                [posS(2,1)-a2(2)*ampFact*drone.r posS(2,1)+a2(2)*ampFact*drone.r], ...
+                [posS(3,1)-a2(3)*ampFact*drone.r posS(3,1)+a2(3)*ampFact*drone.r], 'color', 'k');
     % Define drone structure---------------------------<
 
     speed = sqrt( sum(X(7:9,:).^2, 1) );
@@ -234,10 +234,10 @@ function animate_flight(drone, X, U, T, R_B2B0)
                                                                                               'Y: %s m \n\n' ...
                                                                                               'Z: %s m \n\n'], ...
                                                                                               string(speed(k)), ...
-                                                                                              string(force(1)*drone.b), ...
-                                                                                              string(force(2)*drone.b), ...
-                                                                                              string(force(3)*drone.b), ...
-                                                                                              string(force(4)*drone.b), ...
+                                                                                              string(omega_squared(1)*drone.b), ...
+                                                                                              string(omega_squared(2)*drone.b), ...
+                                                                                              string(omega_squared(3)*drone.b), ...
+                                                                                              string(omega_squared(4)*drone.b), ...
                                                                                               string(posS(1,k)), ...
                                                                                               string(posS(2,k)), ...
                                                                                               string(posS(3,k)) ));
@@ -296,25 +296,27 @@ function animate_flight(drone, X, U, T, R_B2B0)
         n = resultBodyframe(:,3,k);
 
         if k < size(2:length(resultTime)-1,2) - 4
-            force = resultPropSpeed(k,:);
+            omega_squared = resultPropSpeed(k,:);
 
             % Drawing force vectors----------------------------->
 
-            set(fvec1, 'XData', [posS(1,k)+a1(1)*drone.r*ampFact posS(1,k)+a1(1)*drone.r*ampFact-n(1)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)])
-            set(fvec1, 'YData', [posS(2,k)-a1(2)*drone.r*ampFact posS(2,k)-a1(2)*drone.r*ampFact+n(2)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)])
-            set(fvec1, 'ZData', [posS(3,k)-a1(3)*drone.r*ampFact posS(3,k)-a1(3)*drone.r*ampFact+n(3)*scale*exp(force(1)/(10^5)-l1)*log10(force(1)/(10^5)-l2)])
+            visual_force_scalar = 2*(exp(omega_squared/max_omega_squared)-1);
+        
+            set(fvec1, 'XData', [posS(1,k)+a1(1)*drone.r*ampFact posS(1,k)+a1(1)*drone.r*ampFact-n(1)*visual_force_scalar(1)])
+            set(fvec1, 'YData', [posS(2,k)-a1(2)*drone.r*ampFact posS(2,k)-a1(2)*drone.r*ampFact+n(2)*visual_force_scalar(1)])
+            set(fvec1, 'ZData', [posS(3,k)-a1(3)*drone.r*ampFact posS(3,k)-a1(3)*drone.r*ampFact+n(3)*visual_force_scalar(1)])
 
-            set(fvec2, 'XData', [posS(1,k)+a2(1)*drone.r*ampFact posS(1,k)+a2(1)*drone.r*ampFact-n(1)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)])
-            set(fvec2, 'YData', [posS(2,k)-a2(2)*drone.r*ampFact posS(2,k)-a2(2)*drone.r*ampFact+n(2)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)])
-            set(fvec2, 'ZData', [posS(3,k)-a2(3)*drone.r*ampFact posS(3,k)-a2(3)*drone.r*ampFact+n(3)*scale*exp(force(2)/(10^5)-l1)*log10(force(2)/(10^5)-l2)])
+            set(fvec2, 'XData', [posS(1,k)+a2(1)*drone.r*ampFact posS(1,k)+a2(1)*drone.r*ampFact-n(1)*visual_force_scalar(2)])
+            set(fvec2, 'YData', [posS(2,k)-a2(2)*drone.r*ampFact posS(2,k)-a2(2)*drone.r*ampFact+n(2)*visual_force_scalar(2)])
+            set(fvec2, 'ZData', [posS(3,k)-a2(3)*drone.r*ampFact posS(3,k)-a2(3)*drone.r*ampFact+n(3)*visual_force_scalar(2)])
 
-            set(fvec3, 'XData', [posS(1,k)-a1(1)*drone.r*ampFact posS(1,k)-a1(1)*drone.r*ampFact-n(1)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)])
-            set(fvec3, 'YData', [posS(2,k)+a1(2)*drone.r*ampFact posS(2,k)+a1(2)*drone.r*ampFact+n(2)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)])
-            set(fvec3, 'ZData', [posS(3,k)+a1(3)*drone.r*ampFact posS(3,k)+a1(3)*drone.r*ampFact+n(3)*scale*exp(force(3)/(10^5)-l1)*log10(force(3)/(10^5)-l2)])
+            set(fvec3, 'XData', [posS(1,k)-a1(1)*drone.r*ampFact posS(1,k)-a1(1)*drone.r*ampFact-n(1)*visual_force_scalar(3)])
+            set(fvec3, 'YData', [posS(2,k)+a1(2)*drone.r*ampFact posS(2,k)+a1(2)*drone.r*ampFact+n(2)*visual_force_scalar(3)])
+            set(fvec3, 'ZData', [posS(3,k)+a1(3)*drone.r*ampFact posS(3,k)+a1(3)*drone.r*ampFact+n(3)*visual_force_scalar(3)])
 
-            set(fvec4, 'XData', [posS(1,k)-a2(1)*drone.r*ampFact posS(1,k)-a2(1)*drone.r*ampFact-n(1)*scale*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)])
-            set(fvec4, 'YData', [posS(2,k)+a2(2)*drone.r*ampFact posS(2,k)+a2(2)*drone.r*ampFact+n(2)*scale*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)])
-            set(fvec4, 'ZData', [posS(3,k)+a2(3)*drone.r*ampFact posS(3,k)+a2(3)*drone.r*ampFact+n(3)*scale*exp(force(4)/(10^5)-l1)*log10(force(4)/(10^5)-l2)])
+            set(fvec4, 'XData', [posS(1,k)-a2(1)*drone.r*ampFact posS(1,k)-a2(1)*drone.r*ampFact-n(1)*visual_force_scalar(4)])
+            set(fvec4, 'YData', [posS(2,k)+a2(2)*drone.r*ampFact posS(2,k)+a2(2)*drone.r*ampFact+n(2)*visual_force_scalar(4)])
+            set(fvec4, 'ZData', [posS(3,k)+a2(3)*drone.r*ampFact posS(3,k)+a2(3)*drone.r*ampFact+n(3)*visual_force_scalar(4)])
         end
             % Take z axis, mirror it and shift to edges of arms and scale
             % its magnitude with abs(omega)

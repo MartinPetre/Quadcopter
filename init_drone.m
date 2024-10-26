@@ -37,3 +37,12 @@ x_max = [pi/180, pi/180, 0.1*pi/180, 0.1*pi/180, 0.1*pi/180, pi/180, 10, 10, 10,
 
 [P,~,eig,info] = idare(A_d,B_d,Q,R,[],[]);
 L = inv(R+B_d'*P*B_d)*B_d'*P*A_d; % Feedback law u = -Lx
+
+%% Initializing LQR + Integrator Controller 
+
+%% Initializing PID Controller 
+
+%% Initializing MPC Controller 
+
+%% System Errors
+model_error_exists = false;

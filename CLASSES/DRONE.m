@@ -15,8 +15,8 @@ classdef DRONE
         r (1,1) double {mustBeReal, mustBeFinite}
 
         % Propellers
-        b (1,1) double {mustBeReal, mustBeFinite}       % Lift Coefficient
-        d (1,1) double {mustBeReal, mustBeFinite}       % Drag Coefficient
+        b (1,1) double {mustBeReal, mustBeFinite}       % Lift Coefficient [N/(rad/s)²]
+        d (1,1) double {mustBeReal, mustBeFinite}       % Drag Coefficient 
         max_rpm (1,1) double {mustBeReal, mustBeFinite} % Maximum rpm
 
         % Electronics
@@ -56,7 +56,7 @@ classdef DRONE
             obj.x0 = [0;0;0;0;0;0;0;0;0;0;0;0];
 
             % Goal operating point, in S coordinates
-            obj.xg = [0;0;0;0;0;0;0;0;0;5;0;5];
+            obj.xg = [0;0;0;0;0;0;0;0;0;10;0;10];
 
             % Goal operating input (hovering)
             obj.ug = [m*g;0;0;0];
