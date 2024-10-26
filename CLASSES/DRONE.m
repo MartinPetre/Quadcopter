@@ -56,7 +56,7 @@ classdef DRONE
             obj.x0 = [0;0;0;0;0;0;0;0;0;0;0;0];
 
             % Goal operating point, in S coordinates
-            obj.xg = [0;0;0;0;0;0;0;0;0;10;0;10];
+            obj.xg = [0;0;0;0;0;0;0;0;0;0;0;0];
 
             % Goal operating input (hovering)
             obj.ug = [m*g;0;0;0];

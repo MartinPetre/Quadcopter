@@ -1,15 +1,15 @@
 init_drone
 
 f = @xdot_nonlinear; %Nonlinear continuous dynamics function handle
-xBar = drone.xg; %State operating point
-uBar = drone.ug; %Input operating point
+xBar = drone.xg; %State goal/operating point
+uBar = drone.ug; %Input goal/operating point
 
 %% LQR controller
-% controller_lqr = [uBar + L*xBar, -L]; % [ff-term, fb term]
-
-controller_lqr = [uBar, -L]; % [ff-term, fb term]
+% controller_lqr = [ug + L*xg, -L]; % [ff-term, fb term]
+controller_lqr = LQCONTROLLER('LQR', [uBar, -L]);
 
 %% LQR + integrator
+controller_lqri = LQCONTROLLER('LQRI', [uBar, -LI]);
 
 %% PID
 
@@ -48,8 +48,9 @@ while ~satisfied
 end
 
 %% Simulation
+controller = controller_lqri; % Choose controller
 delta_t = 0.01;
-[X, U, T, R_B2B0] = simulate(drone, world, controller_lqr, TrajectoryB0, f, delta_t, t_end);
+[X, U, T, R_B2B0] = simulate(drone, world, controller, TrajectoryB0, f, delta_t, t_end);
 
 %% Visualization
 animate_flight(drone, X, U, T, R_B2B0)
